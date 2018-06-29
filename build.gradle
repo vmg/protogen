@@ -1,0 +1,53 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+}
+
+plugins {
+	id "com.jfrog.bintray" version "1.7"
+}
+
+group 'com.github.vmg.protogen'
+version '0.1'
+
+allprojects {
+	repositories {
+		jcenter()
+	}
+	apply plugin: 'java'
+}
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile project(':protogen-annotations')
+    compile 'com.google.guava:guava:25.1-jre'
+    compile 'com.squareup:javapoet:1.11.1'
+    compile 'com.github.jknack:handlebars:4.0.6'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                   'Implementation-Version': project.version)
+    }
+}
+
+bintray {
+	user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+	key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+	configurations = ['archives']
+	pkg {
+		repo = 'protogen'
+		name = 'protogen'
+		userOrg = user
+		licenses = ['Apache-2.0']
+		vcsUrl = 'https://github.com/vmg/protogen'
+		version {
+			name = "0.1"
+		}
+	}
+}
+

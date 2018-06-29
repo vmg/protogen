@@ -1,0 +1,5 @@
+rootProject.name = 'protogen'
+include 'annotations'
+
+rootProject.children.each {it.name="protogen-${it.name}"}
+
