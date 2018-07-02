@@ -1,0 +1,21 @@
+version '0.1.0'
+
+dependencies {
+    compile project(':protogen-annotations')
+
+    compile 'com.google.guava:guava:25.1-jre'
+    compile 'com.squareup:javapoet:1.11.+'
+    compile 'com.github.jknack:handlebars:4.0.+'
+
+    testCompile 'junit:junit:4.+'
+}
+
+bintray {
+    pkg {
+        version {
+            name = project.version
+            vcsTag = project.version
+            attributes = [:]
+        }
+    }
+}

@@ -1,31 +1,11 @@
-plugins {
-    id "com.jfrog.bintray"
-}
-
-group 'com.github.vmg.protogen'
-version '0.1'
-
-sourceCompatibility = 1.8
-
-jar {
-    manifest {
-        attributes('Implementation-Title': project.name,
-                'Implementation-Version': project.version)
-    }
-}
+version '0.1.0'
 
 bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    configurations = ['archives']
     pkg {
-        repo = 'protogen'
-        name = 'protogen-annotations'
-        userOrg = user
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/vmg/protogen'
         version {
-            name = "0.1"
+            name = project.version
+            vcsTag = project.version
+            attributes = [:]
         }
     }
 }
