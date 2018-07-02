@@ -3,7 +3,7 @@ package com.github.vmg.protogen;
 import com.github.jknack.handlebars.EscapingStrategy;
 import com.github.jknack.handlebars.Handlebars;
 import com.github.jknack.handlebars.Template;
-import com.github.jknack.handlebars.io.FileTemplateLoader;
+import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
 import com.github.jknack.handlebars.io.TemplateLoader;
 import com.squareup.javapoet.*;
 
@@ -54,7 +54,7 @@ public class ProtoGen {
     }
 
     public void writeProtos(String root) throws Exception {
-        TemplateLoader loader = new FileTemplateLoader("protogen/templates", ".proto");
+        TemplateLoader loader = new ClassPathTemplateLoader("/templates", ".proto");
         Handlebars handlebars = new Handlebars(loader)
                 .infiniteLoops(true)
                 .prettyPrint(true)
