@@ -22,7 +22,7 @@ abstract class GenericType extends AbstractType {
         ParameterizedType tt = (ParameterizedType)this.getJavaType();
         Type[] types = tt.getActualTypeArguments();
 
-        AbstractType abstractType = AbstractType.get(types[idx]);
+        AbstractType abstractType = TypeMapper.INSTANCE.get(types[idx]);
         if (abstractType instanceof GenericType) {
             return WrappedType.wrap((GenericType) abstractType);
         }

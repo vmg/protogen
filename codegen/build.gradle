@@ -6,6 +6,7 @@ dependencies {
     compile 'com.google.guava:guava:25.1-jre'
     compile 'com.squareup:javapoet:1.11.+'
     compile 'com.github.jknack:handlebars:4.0.+'
+    compile 'com.google.protobuf:protobuf-java:3.5.1'
 
     testCompile 'junit:junit:4.+'
 }

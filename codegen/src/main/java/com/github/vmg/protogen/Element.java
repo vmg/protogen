@@ -4,6 +4,7 @@ import com.github.vmg.protogen.types.AbstractType;
 import com.github.vmg.protogen.types.MessageType;
 import com.github.vmg.protogen.annotations.ProtoEnum;
 import com.github.vmg.protogen.annotations.ProtoMessage;
+import com.github.vmg.protogen.types.TypeMapper;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
@@ -17,7 +18,7 @@ public abstract class Element {
 
     public Element(Class cls, MessageType parentType) {
         this.clazz = cls;
-        this.type = AbstractType.declare(cls, parentType);
+        this.type = TypeMapper.INSTANCE.declare(cls, parentType);
 
         for (Class nested : clazz.getDeclaredClasses()) {
             if (nested.isEnum())

@@ -47,7 +47,7 @@ public class ListType extends GenericType {
     public void mapFromProto(String field, MethodSpec.Builder method) {
         AbstractType subtype = getValueType();
         Type entryType = subtype.getJavaType();
-        Class collector = PROTO_LIST_TYPES.get(getRawType());
+        Class collector = TypeMapper.PROTO_LIST_TYPES.get(getRawType());
 
         if (subtype instanceof ScalarType) {
             if (entryType.equals(String.class)) {

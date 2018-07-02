@@ -16,50 +16,20 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class ProtoGen {
-    public static String PROTO_PACKAGE_NAME = "conductor.proto";
-    public static String PROTO_JAVA_PACKAGE_NAME = "com.netflix.conductor.proto";
-    public static String PROTO_GO_PACKAGE_NAME = "github.com/netflix/conductor/client/gogrpc/conductor/model";
+    private final static String GENERATOR_NAME = "ProtoGen";
 
-    public static String GENERATED_MAPPER_PACKAGE = "com.netflix.conductor.grpc";
-    public static String GENERATOR_NAME = "ProtoGen";
-
+    private String protoPackageName;
+    private String javaPackageName;
+    private String goPackageName;
     private List<File> files = new ArrayList<>();
 
-    public static void main(String[] args) throws Exception {
-        ProtoGen generator = new ProtoGen();
-
-        /*
-        generator.process(com.netflix.conductor.common.metadata.events.EventExecution.class);
-        generator.process(com.netflix.conductor.common.metadata.events.EventHandler.class);
-
-        generator.process(com.netflix.conductor.common.metadata.tasks.PollData.class);
-        generator.process(com.netflix.conductor.common.metadata.tasks.Task.class);
-        generator.process(com.netflix.conductor.common.metadata.tasks.TaskDef.class);
-        generator.process(com.netflix.conductor.common.metadata.tasks.TaskExecLog.class);
-        generator.process(com.netflix.conductor.common.metadata.tasks.TaskResult.class);
-
-        generator.process(com.netflix.conductor.common.metadata.workflow.DynamicForkJoinTask.class);
-        generator.process(com.netflix.conductor.common.metadata.workflow.DynamicForkJoinTaskList.class);
-        generator.process(com.netflix.conductor.common.metadata.workflow.RerunWorkflowRequest.class);
-        generator.process(com.netflix.conductor.common.metadata.workflow.SkipTaskRequest.class);
-        generator.process(com.netflix.conductor.common.metadata.workflow.StartWorkflowRequest.class);
-        generator.process(com.netflix.conductor.common.metadata.workflow.SubWorkflowParams.class);
-        generator.process(com.netflix.conductor.common.metadata.workflow.WorkflowDef.class);
-        generator.process(com.netflix.conductor.common.metadata.workflow.WorkflowTask.class);
-
-        generator.process(com.netflix.conductor.common.run.TaskSummary.class);
-        generator.process(com.netflix.conductor.common.run.Workflow.class);
-        generator.process(com.netflix.conductor.common.run.WorkflowSummary.class);
-        */
-
-        generator.writeProtos("grpc/src/main/proto");
-        generator.writeMapper("grpc/src/main/java/com/netflix/conductor/grpc/");
+    public ProtoGen(String protoPackageName, String javaPackageName, String goPackageName) {
+        this.protoPackageName = protoPackageName;
+        this.javaPackageName = javaPackageName;
+        this.goPackageName = goPackageName;
     }
 
-    public ProtoGen() {
-    }
-
-    public void writeMapper(String root) throws Exception {
+    public void writeMapper(String mapperPackageName, String root) throws Exception {
         TypeSpec.Builder protoMapper = TypeSpec.classBuilder("AbstractProtoMapper")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .addAnnotation(AnnotationSpec.builder(Generated.class)
@@ -75,7 +45,7 @@ public class ProtoGen {
 
         protoMapper.addMethods(abstractMethods);
 
-        JavaFile javaFile = JavaFile.builder(GENERATED_MAPPER_PACKAGE, protoMapper.build())
+        JavaFile javaFile = JavaFile.builder(mapperPackageName, protoMapper.build())
                 .indent("    ").build();
         Path filename = Paths.get(root, "AbstractProtoMapper.java");
         try (Writer writer = new FileWriter(filename.toString())) {
@@ -101,6 +71,6 @@ public class ProtoGen {
     }
 
     public void process(Class obj) throws Exception {
-        files.add(new File(obj));
+        files.add(new File(obj, protoPackageName, javaPackageName, goPackageName));
     }
 }

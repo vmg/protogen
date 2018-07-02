@@ -17,7 +17,7 @@ public class WrappedType extends AbstractType {
             throw new IllegalArgumentException("cannot wrap primitive type: "+ valueType);
 
         String className = ((Class) valueType).getSimpleName() + realType.getWrapperSuffix();
-        MessageType wrappedType = AbstractType.get(className);
+        MessageType wrappedType = TypeMapper.INSTANCE.get(className);
         if (wrappedType == null)
             throw new IllegalArgumentException("missing wrapper class: "+className);
         return new WrappedType(realType, wrappedType);

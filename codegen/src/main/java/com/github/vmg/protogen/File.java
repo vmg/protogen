@@ -1,6 +1,7 @@
 package com.github.vmg.protogen;
 
 import com.github.vmg.protogen.types.AbstractType;
+import com.github.vmg.protogen.types.TypeMapper;
 import com.squareup.javapoet.ClassName;
 
 import java.util.*;
@@ -12,11 +13,19 @@ public class File {
     private Element message;
     private String filePath;
 
-    public File(Class object) {
+    private String protoPackageName;
+    private String javaPackageName;
+    private String goPackageName;
+
+    public File(Class object, String protoPackageName, String javaPackageName, String goPackageName) {
+        this.protoPackageName = protoPackageName;
+        this.javaPackageName = javaPackageName;
+        this.goPackageName = goPackageName;
+
         String className = object.getSimpleName() + PROTO_SUFFIX;
         this.filePath = "model/" + object.getSimpleName().toLowerCase() + ".proto";
-        this.baseClass = ClassName.get(ProtoGen.PROTO_JAVA_PACKAGE_NAME, className);
-        this.message = new Message(object,  AbstractType.baseClass(baseClass, filePath));
+        this.baseClass = ClassName.get(this.javaPackageName, className);
+        this.message = new Message(object,  TypeMapper.INSTANCE.baseClass(baseClass, filePath));
     }
 
     public String getJavaClassName() {
@@ -27,16 +36,16 @@ public class File {
         return filePath;
     }
 
-    public String getPackageName() {
-        return ProtoGen.PROTO_PACKAGE_NAME;
+    public String getProtoPackageName() {
+        return protoPackageName;
     }
 
     public String getJavaPackageName() {
-        return ProtoGen.PROTO_JAVA_PACKAGE_NAME;
+        return javaPackageName;
     }
 
-    public String getGoPackage() {
-        return ProtoGen.PROTO_GO_PACKAGE_NAME;
+    public String getGoPackageName() {
+        return goPackageName;
     }
 
     public Element getMessage() {

@@ -4,6 +4,7 @@ import com.github.vmg.protogen.annotations.ProtoField;
 import com.github.vmg.protogen.annotations.ProtoMessage;
 import com.github.vmg.protogen.types.AbstractType;
 import com.github.vmg.protogen.types.MessageType;
+import com.github.vmg.protogen.types.TypeMapper;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -92,7 +93,7 @@ public class Message extends Element {
 
         public AbstractType getAbstractType() {
             if (type == null) {
-                type = AbstractType.get(field.getGenericType());
+                type = TypeMapper.INSTANCE.get(field.getGenericType());
             }
             return type;
         }
