@@ -9,3 +9,13 @@ dependencies {
 
     testCompile 'junit:junit:4.+'
 }
+
+bintray {
+    pkg {
+        version {
+            name = project.version
+            vcsTag = project.version
+            attributes = [:]
+        }
+    }
+}

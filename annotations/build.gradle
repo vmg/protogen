@@ -1,2 +1,11 @@
 version '0.1.0'
 
+bintray {
+    pkg {
+        version {
+            name = project.version
+            vcsTag = project.version
+            attributes = [:]
+        }
+    }
+}
