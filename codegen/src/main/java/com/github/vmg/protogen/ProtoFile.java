@@ -1,23 +1,22 @@
 package com.github.vmg.protogen;
 
-import com.github.vmg.protogen.types.AbstractType;
 import com.github.vmg.protogen.types.TypeMapper;
 import com.squareup.javapoet.ClassName;
 
 import java.util.*;
 
-public class File {
+public class ProtoFile {
     public static String PROTO_SUFFIX = "Pb";
 
     private ClassName baseClass;
-    private Element message;
+    private AbstractMessage message;
     private String filePath;
 
     private String protoPackageName;
     private String javaPackageName;
     private String goPackageName;
 
-    public File(Class object, String protoPackageName, String javaPackageName, String goPackageName) {
+    public ProtoFile(Class<?> object, String protoPackageName, String javaPackageName, String goPackageName) {
         this.protoPackageName = protoPackageName;
         this.javaPackageName = javaPackageName;
         this.goPackageName = goPackageName;
@@ -48,7 +47,7 @@ public class File {
         return goPackageName;
     }
 
-    public Element getMessage() {
+    public AbstractMessage getMessage() {
         return message;
     }
 

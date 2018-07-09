@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Message extends Element {
-    public Message(Class cls, MessageType parent) {
+public class Message extends AbstractMessage {
+    public Message(Class<?> cls, MessageType parent) {
         super(cls, parent);
 
         for (java.lang.reflect.Field field: clazz.getDeclaredFields()) {

@@ -1,6 +1,5 @@
 package com.github.vmg.protogen;
 
-import com.github.vmg.protogen.types.AbstractType;
 import com.github.vmg.protogen.types.MessageType;
 import com.github.vmg.protogen.annotations.ProtoEnum;
 import com.github.vmg.protogen.annotations.ProtoMessage;
@@ -10,17 +9,20 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.util.*;
 
-public abstract class Element {
-    protected Class clazz;
+public abstract class AbstractMessage {
+    protected Class<?> clazz;
     protected MessageType type;
     protected List<Field> fields = new ArrayList<Field>();
-    protected List<Element> nested = new ArrayList<>();
+    protected List<AbstractMessage> nested = new ArrayList<>();
 
-    public Element(Class cls, MessageType parentType) {
+    public AbstractMessage(Class<?> cls, MessageType parentType) {
+        assert cls.isAnnotationPresent(ProtoMessage.class) ||
+                cls.isAnnotationPresent(ProtoEnum.class);
+
         this.clazz = cls;
         this.type = TypeMapper.INSTANCE.declare(cls, parentType);
 
-        for (Class nested : clazz.getDeclaredClasses()) {
+        for (Class<?> nested : clazz.getDeclaredClasses()) {
             if (nested.isEnum())
                 addNestedEnum(nested);
             else
@@ -28,14 +30,14 @@ public abstract class Element {
         }
     }
 
-    private void addNestedEnum(Class cls) {
+    private void addNestedEnum(Class<?> cls) {
         ProtoEnum ann = (ProtoEnum)cls.getAnnotation(ProtoEnum.class);
         if (ann != null) {
             nested.add(new Enum(cls, this.type));
         }
     }
 
-    private void addNestedClass(Class cls) {
+    private void addNestedClass(Class<?> cls) {
         ProtoMessage ann = (ProtoMessage)cls.getAnnotation(ProtoMessage.class);
         if (ann != null) {
             nested.add(new Message(cls, this.type));
@@ -50,8 +52,8 @@ public abstract class Element {
         javaMapToProto(builder);
         javaMapFromProto(builder);
 
-        for (Element element : this.nested) {
-            element.generateJavaMapper(builder);
+        for (AbstractMessage abstractMessage : this.nested) {
+            abstractMessage.generateJavaMapper(builder);
         }
     }
 
@@ -60,7 +62,7 @@ public abstract class Element {
             field.generateAbstractMethods(specs);
         }
 
-        for (Element elem : nested) {
+        for (AbstractMessage elem : nested) {
             elem.generateAbstractMethods(specs);
         }
     }
@@ -70,12 +72,12 @@ public abstract class Element {
             field.getDependencies(dependencies);
         }
 
-        for (Element elem : nested) {
+        for (AbstractMessage elem : nested) {
             elem.findDependencies(dependencies);
         }
     }
 
-    public List<Element> getNested() {
+    public List<AbstractMessage> getNested() {
         return nested;
     }
 

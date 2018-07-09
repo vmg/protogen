@@ -1,4 +1,4 @@
-version '0.4.0'
+version '0.2.0'
 
 dependencies {
     compile project(':protogen-annotations')
@@ -7,6 +7,7 @@ dependencies {
     compile 'com.squareup:javapoet:1.11.+'
     compile 'com.github.jknack:handlebars:4.0.+'
     compile 'com.google.protobuf:protobuf-java:3.5.1'
+    compile gradleApi()
 
     testCompile 'junit:junit:4.+'
 }

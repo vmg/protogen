@@ -1,5 +1,4 @@
 include 'annotations', 'codegen'
-
 rootProject.name = 'protogen'
 rootProject.children.each {it.name="protogen-${it.name}"}
 

@@ -7,7 +7,7 @@ import com.squareup.javapoet.TypeSpec;
 
 import javax.lang.model.element.Modifier;
 
-public class Enum extends Element {
+public class Enum extends AbstractMessage {
     public Enum(Class cls, MessageType parent) {
         super(cls, parent);
 
