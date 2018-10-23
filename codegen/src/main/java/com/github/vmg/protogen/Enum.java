@@ -8,6 +8,20 @@ import com.squareup.javapoet.TypeSpec;
 import javax.lang.model.element.Modifier;
 
 public class Enum extends AbstractMessage {
+    public enum MapType {
+        FROM_PROTO("fromProto"),
+        TO_PROTO("toProto");
+
+        private final String methodName;
+        MapType(String m) {
+            methodName = m;
+        }
+
+        public String getMethodName() {
+            return methodName;
+        }
+    }
+
     public Enum(Class cls, MessageType parent) {
         super(cls, parent);
 
@@ -23,8 +37,8 @@ public class Enum extends AbstractMessage {
         return "enum";
     }
 
-    private MethodSpec javaMap(String methodName, TypeName from, TypeName to) {
-        MethodSpec.Builder method = MethodSpec.methodBuilder(methodName);
+    private MethodSpec javaMap(MapType mt, TypeName from, TypeName to) {
+        MethodSpec.Builder method = MethodSpec.methodBuilder(mt.getMethodName());
         method.addModifiers(Modifier.PUBLIC);
         method.returns(to);
         method.addParameter(from, "from");
@@ -33,8 +47,9 @@ public class Enum extends AbstractMessage {
         method.beginControlFlow("switch (from)");
 
         for (Field field : fields) {
-            String name = field.getName();
-            method.addStatement("case $L: to = $T.$L; break", name, to, name);
+            String fromName = (mt == MapType.TO_PROTO) ? field.getName() : field.getProtoName();
+            String toName = (mt == MapType.TO_PROTO) ? field.getProtoName() : field.getName();
+            method.addStatement("case $L: to = $T.$L; break", fromName, to, toName);
         }
 
         method.addStatement("default: throw new $T(\"Unexpected enum constant: \" + from)",
@@ -46,12 +61,12 @@ public class Enum extends AbstractMessage {
 
     @Override
     protected void javaMapFromProto(TypeSpec.Builder type) {
-        type.addMethod(javaMap("fromProto", this.type.getJavaProtoType(), TypeName.get(this.clazz)));
+        type.addMethod(javaMap(MapType.FROM_PROTO, this.type.getJavaProtoType(), TypeName.get(this.clazz)));
     }
 
     @Override
     protected void javaMapToProto(TypeSpec.Builder type) {
-        type.addMethod(javaMap("toProto", TypeName.get(this.clazz), this.type.getJavaProtoType()));
+        type.addMethod(javaMap(MapType.TO_PROTO, TypeName.get(this.clazz), this.type.getJavaProtoType()));
     }
 
     public class EnumField extends Field {
@@ -61,7 +76,7 @@ public class Enum extends AbstractMessage {
 
         @Override
         public String getProtoTypeDeclaration() {
-            return String.format("%s = %d", getName().toUpperCase(), getProtoIndex());
+            return String.format("%s = %d", getProtoName(), getProtoIndex());
         }
     }
 }

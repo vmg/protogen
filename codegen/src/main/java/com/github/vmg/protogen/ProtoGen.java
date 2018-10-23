@@ -42,6 +42,16 @@ public class ProtoGen {
 
         Set<MethodSpec> abstractMethods = new HashSet<>();
 
+        protoFiles.sort(
+                new Comparator<ProtoFile>() {
+                    public int compare(ProtoFile p1, ProtoFile p2) {
+                        String n1 = p1.getMessage().getName();
+                        String n2 = p2.getMessage().getName();
+                        return n1.compareTo(n2);
+                    }
+                }
+        );
+
         for (ProtoFile protoFile : protoFiles) {
             AbstractMessage elem = protoFile.getMessage();
             elem.generateJavaMapper(protoMapper);

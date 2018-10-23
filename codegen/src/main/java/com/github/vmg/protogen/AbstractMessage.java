@@ -107,6 +107,7 @@ public abstract class AbstractMessage {
         public String getName() {
             return field.getName();
         }
+        public String getProtoName() { return field.getName().toUpperCase(); }
 
         public void getDependencies(Set<String> deps) {}
         public void generateAbstractMethods(Set<MethodSpec> specs) {}

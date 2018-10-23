@@ -33,9 +33,9 @@ public class MessageType extends AbstractType {
 
     @Override
     public void mapToProto(String field, MethodSpec.Builder method) {
-        final String getter = fieldMethod("get", field);
+        final String getter = javaMethodName("get", field);
         method.beginControlFlow("if (from.$L() != null)", getter);
-        method.addStatement("to.$L( toProto( from.$L() ) )", fieldMethod("set", field), getter);
+        method.addStatement("to.$L( toProto( from.$L() ) )", protoMethodName("set", field), getter);
         method.endControlFlow();
     }
 
@@ -47,10 +47,10 @@ public class MessageType extends AbstractType {
     @Override
     public void mapFromProto(String field, MethodSpec.Builder method) {
         if (!isEnum())
-            method.beginControlFlow("if (from.$L())", fieldMethod("has", field));
+            method.beginControlFlow("if (from.$L())", protoMethodName("has", field));
 
         method.addStatement("to.$L( fromProto( from.$L() ) )",
-                fieldMethod("set", field), fieldMethod("get", field));
+                javaMethodName("set", field), protoMethodName("get", field));
 
         if (!isEnum())
             method.endControlFlow();

@@ -42,15 +42,15 @@ public class MapType extends GenericType {
         AbstractType valueType = getValueType();
         if (valueType instanceof ScalarType) {
             method.addStatement("to.$L( from.$L() )",
-                    fieldMethod("putAll", field), fieldMethod("get", field));
+                    protoMethodName("putAll", field), javaMethodName("get", field));
         } else {
             TypeName typeName = ParameterizedTypeName.get(Map.Entry.class,
                     getKeyType().getJavaType(),
                     getValueType().getJavaType());
             method.beginControlFlow("for ($T pair : from.$L().entrySet())",
-                    typeName, fieldMethod("get", field));
+                    typeName, javaMethodName("get", field));
             method.addStatement("to.$L( pair.getKey(), toProto( pair.getValue() ) )",
-                    fieldMethod("put", field));
+                    protoMethodName("put", field));
             method.endControlFlow();
         }
     }
@@ -60,7 +60,7 @@ public class MapType extends GenericType {
         AbstractType valueType = getValueType();
         if (valueType instanceof ScalarType) {
             method.addStatement("to.$L( from.$L() )",
-                    fieldMethod("set", field), fieldMethod("get", field)+"Map");
+                    javaMethodName("set", field), protoMethodName("get", field)+"Map");
         } else {
             Type keyType = getKeyType().getJavaType();
             Type valueTypeJava = getValueType().getJavaType();
@@ -73,10 +73,10 @@ public class MapType extends GenericType {
 
             method.addStatement("$T $L = new $T()", mapType, mapName, hashMapType);
             method.beginControlFlow("for ($T pair : from.$L().entrySet())",
-                    entryType, fieldMethod("get", field)+"Map");
+                    entryType, protoMethodName("get", field)+"Map");
             method.addStatement("$L.put( pair.getKey(), fromProto( pair.getValue() ) )", mapName);
             method.endControlFlow();
-            method.addStatement("to.$L($L)", fieldMethod("set", field), mapName);
+            method.addStatement("to.$L($L)", javaMethodName("set", field), mapName);
         }
     }
 

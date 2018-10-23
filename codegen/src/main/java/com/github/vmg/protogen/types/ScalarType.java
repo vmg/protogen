@@ -25,15 +25,10 @@ public class ScalarType extends AbstractType {
         return getJavaProtoType();
     }
 
-    private void mapCode(String field, MethodSpec.Builder method, String getter) {
-        method.addStatement("to.$L( from.$L() )",
-                fieldMethod("set", field), fieldMethod(getter, field));
-    }
-
     @Override
     public void mapFromProto(String field, MethodSpec.Builder method) {
         method.addStatement("to.$L( from.$L() )",
-                fieldMethod("set", field), fieldMethod("get", field));
+                javaMethodName("set", field), protoMethodName("get", field));
     }
 
     private boolean isNullableType() {
@@ -55,13 +50,13 @@ public class ScalarType extends AbstractType {
         String getter = (
                 getJavaType().equals(boolean.class) ||
                 getJavaType().equals(Boolean.class)) ?
-                fieldMethod("is", field) :
-                fieldMethod("get", field);
+                javaMethodName("is", field) :
+                javaMethodName("get", field);
 
         if (nullable)
             method.beginControlFlow("if (from.$L() != null)", getter);
 
-        method.addStatement("to.$L( from.$L() )", fieldMethod("set", field), getter);
+        method.addStatement("to.$L( from.$L() )", protoMethodName("set", field), getter);
 
         if (nullable)
             method.endControlFlow();

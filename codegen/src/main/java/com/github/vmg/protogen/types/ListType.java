@@ -33,12 +33,12 @@ public class ListType extends GenericType {
         AbstractType subtype = getValueType();
         if (subtype instanceof ScalarType) {
             method.addStatement("to.$L( from.$L() )",
-                    fieldMethod("addAll", field), fieldMethod("get", field));
+                    protoMethodName("addAll", field), javaMethodName("get", field));
         } else {
             method.beginControlFlow("for ($T elem : from.$L())",
-                    subtype.getJavaType(), fieldMethod("get", field));
+                    subtype.getJavaType(), javaMethodName("get", field));
             method.addStatement("to.$L( toProto(elem) )",
-                fieldMethod("add", field));
+                protoMethodName("add", field));
             method.endControlFlow();
         }
     }
@@ -52,15 +52,15 @@ public class ListType extends GenericType {
         if (subtype instanceof ScalarType) {
             if (entryType.equals(String.class)) {
                 method.addStatement("to.$L( from.$L().stream().collect($T.toCollection($T::new)) )",
-                        fieldMethod("set", field), fieldMethod("get", field)+"List",
+                        javaMethodName("set", field), protoMethodName("get", field)+"List",
                         Collectors.class, collector);
             } else {
                 method.addStatement("to.$L( from.$L() )",
-                        fieldMethod("set", field), fieldMethod("get", field) + "List");
+                        javaMethodName("set", field), protoMethodName("get", field) + "List");
             }
         } else {
             method.addStatement("to.$L( from.$L().stream().map(this::fromProto).collect($T.toCollection($T::new)) )",
-                    fieldMethod("set", field), fieldMethod("get", field)+"List",
+                    javaMethodName("set", field), protoMethodName("get", field)+"List",
                     Collectors.class, collector);
         }
     }

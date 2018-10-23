@@ -32,7 +32,13 @@ public abstract class AbstractType {
     public abstract void getDependencies(Set<String> deps);
     public abstract void generateAbstractMethods(Set<MethodSpec> specs);
 
-    protected String fieldMethod(String m, String field) {
-        return m + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, field);
+    protected String javaMethodName(String m, String field) {
+        String fieldName = field.substring(0, 1).toUpperCase() + field.substring(1);
+        return m + fieldName;
+    }
+
+    protected String protoMethodName(String m, String field) {
+        CaseFormat cs = field.contains("_") ? CaseFormat.LOWER_UNDERSCORE : CaseFormat.LOWER_CAMEL;
+        return m + cs.to(CaseFormat.UPPER_CAMEL, field);
     }
 }
