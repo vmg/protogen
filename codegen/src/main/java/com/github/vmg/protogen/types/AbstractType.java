@@ -1,9 +1,7 @@
 package com.github.vmg.protogen.types;
 
-import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
-
 import java.lang.reflect.Type;
 import java.util.*;
 
@@ -37,8 +35,57 @@ public abstract class AbstractType {
         return m + fieldName;
     }
 
+    private static class ProtoCase {
+        static String convert(String s) {
+            StringBuilder out = new StringBuilder(s.length());
+            final int len = s.length();
+            int i = 0;
+            int j = -1;
+            while ((j = findWordBoundary(s, ++j)) != -1) {
+                out.append(normalizeWord(s.substring(i, j)));
+                if (j < len && s.charAt(j) == '_')
+                    j++;
+                i = j;
+            }
+            if (i == 0)
+                return normalizeWord(s);
+            if (i < len)
+                out.append(normalizeWord(s.substring(i)));
+            return out.toString();
+        }
+
+        private static boolean isWordBoundary(char c) {
+            return (c >= 'A' && c <= 'Z');
+        }
+
+        private static int findWordBoundary(CharSequence sequence, int start) {
+            int length = sequence.length();
+            if (start >= length)
+                return -1;
+
+            if (isWordBoundary(sequence.charAt(start))) {
+                int i = start;
+                while (i < length && isWordBoundary(sequence.charAt(i)))
+                    i++;
+                return i;
+            } else {
+                for (int i = start; i < length; i++) {
+                    final char c = sequence.charAt(i);
+                    if (c == '_' || isWordBoundary(c))
+                        return i;
+                }
+                return -1;
+            }
+        }
+
+        private static String normalizeWord(String word) {
+            if (word.length() < 2)
+                return word.toUpperCase();
+            return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+        }
+    }
+
     protected String protoMethodName(String m, String field) {
-        CaseFormat cs = field.contains("_") ? CaseFormat.LOWER_UNDERSCORE : CaseFormat.LOWER_CAMEL;
-        return m + cs.to(CaseFormat.UPPER_CAMEL, field);
+        return m + ProtoCase.convert(field);
     }
 }
