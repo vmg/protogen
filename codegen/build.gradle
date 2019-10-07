@@ -1,5 +1,9 @@
 version '1.4.0'
 
+sourceSets {
+    example
+}
+
 dependencies {
     compile project(':protogen-annotations')
 
@@ -9,8 +13,18 @@ dependencies {
     compile 'com.google.protobuf:protobuf-java:3.5.1'
     compile gradleApi()
 
+    exampleCompile sourceSets.main.output
+    exampleCompile project(':protogen-annotations')
+
     testCompile 'junit:junit:4.+'
 }
+
+task exampleJar(type: Jar) {
+    archiveName = 'example.jar'
+    from sourceSets.example.output.classesDirs
+}
+
+testClasses.finalizedBy(exampleJar)
 
 bintray {
     pkg {
